@@ -1,32 +1,41 @@
 # Installing CIT: Step by Step
 
-This guide walks you through everything from downloading the files to confirming CIT is working. Pick your platform and follow the steps in order.
+This guide walks you through everything from downloading the files to confirming CIT is working. Find your platform below and follow the steps in order.
 
 ---
 
-## Before You Start
+## Which Version of Claude Do You Have?
 
-CIT has two versions depending on how you use Claude:
+There are three ways to use Claude and CIT works on all of them:
 
-- **Claude Code** - if you use Claude through the terminal (the `claude` CLI). This is the most reliable version with full persistence.
-- **claude.ai** - if you use Claude through the website or mobile app.
+| Platform | How you access it | Install method |
+|---|---|---|
+| **Claude Desktop** | Downloaded app on your Mac or Windows PC | Upload .zip files through the app |
+| **claude.ai** | Browser at claude.ai | Upload .zip files through settings |
+| **Claude Code** | Terminal command (`claude`) | Copy folders to `~/.claude/skills/` |
 
-Not sure which one you have? If you have a terminal and have run `claude` as a command before, you have Claude Code. If you use Claude at claude.ai in your browser, that's the web version.
+Not sure which one you have? If you go to claude.ai in your browser, that's the web version. If you downloaded a standalone app, that's Claude Desktop. If you've run `claude` as a terminal command, that's Claude Code.
 
-You can also use both. CIT works on each independently.
+> **Note:** Skills require a Pro plan or higher on Claude Desktop and claude.ai. Claude Code users on any plan can use skills.
 
 ---
 
-## Step 1: Download the Files
+## Download the Files
 
-### Option A: Download the ZIP (easiest)
+### For Claude Desktop or claude.ai (ZIP files)
 
-1. Go to [github.com/AstorisTheBrave/CIT-Cascade-Impact-Trace-for-Claude](https://github.com/AstorisTheBrave/CIT-Cascade-Impact-Trace-for-Claude)
-2. Click the green **Code** button near the top right
-3. Click **Download ZIP**
-4. Unzip the file somewhere you can find it (your Downloads folder is fine)
+Download the individual skill files you need. Right-click each link and save:
 
-### Option B: Clone with Git (if you're comfortable with the terminal)
+- [cit-config.zip](./downloads/cit-config.zip) - Shared config (recommended first install)
+- [cit-chat.zip](./downloads/cit-chat.zip) - CIT for conversations
+- [cit-code.zip](./downloads/cit-code.zip) - CIT for coding
+- [cit-design.zip](./downloads/cit-design.zip) - CIT for design
+
+Or download everything at once using the green **Code > Download ZIP** button on the main repo page, then find the zip files inside the `downloads/` folder.
+
+### For Claude Code (folder-based)
+
+Clone or download the full repo. You will copy the skill folders directly.
 
 ```bash
 git clone https://github.com/AstorisTheBrave/CIT-Cascade-Impact-Trace-for-Claude.git
@@ -34,19 +43,66 @@ git clone https://github.com/AstorisTheBrave/CIT-Cascade-Impact-Trace-for-Claude
 
 ---
 
-## Step 2: Install on Claude Code
+## Installing on Claude Desktop
 
-Claude Code reads skills from a folder on your computer. You need to put the CIT skill folders there.
+1. Open the Claude Desktop app on your computer
+2. Click the **settings icon** (gear icon, usually bottom left or top right depending on your version)
+3. Go to **Customize** then **Skills**
+4. Click **Add skill** or the **+** button
+5. Upload `cit-config.zip` first
+6. Repeat for each skill you want: `cit-chat.zip`, `cit-code.zip`, `cit-design.zip`
+7. Make sure each skill is toggled **on** after uploading
 
-### Find or create your Claude skills folder
+**Confirming it worked:**
+After uploading, start a new conversation and type:
+```
+cit setup
+```
+Claude should respond with three setup questions. If it does, you're good.
 
-Open your terminal and run:
+**Troubleshooting:**
+- If you don't see a Skills section in settings, check your plan. Skills require Pro or higher.
+- If a skill uploads but doesn't respond, try toggling it off and back on, then start a fresh conversation.
+- Some features roll out region by region. If Skills isn't visible yet, check back in a few days or check the [Claude release notes](https://support.claude.com).
+
+---
+
+## Installing on claude.ai (Browser)
+
+1. Go to [claude.ai](https://claude.ai) and sign in
+2. Click your profile icon in the top right corner
+3. Go to **Settings**
+4. Click **Customize** then **Skills**
+5. Click **Add skill** or the **+** button
+6. Upload `cit-config.zip` first
+7. Repeat for each skill: `cit-chat.zip`, `cit-code.zip`, `cit-design.zip`
+8. Make sure each skill is toggled **on**
+
+**Confirming it worked:**
+Start a new conversation and type:
+```
+cit setup
+```
+Claude should respond with three setup questions.
+
+**Troubleshooting:**
+- Skills require a Pro plan or higher. If you don't see the Skills section, check your plan at [claude.ai/settings/billing](https://claude.ai/settings/billing).
+- Skills load at the start of a session. If you just installed one, open a fresh conversation.
+- If CIT-Chat rules aren't saving between conversations, go to Settings and make sure **Memory** is turned on. CIT-Chat relies on memory to persist your rules.
+
+---
+
+## Installing on Claude Code (Terminal)
+
+Claude Code reads skills from a folder on your machine. You copy the skill folders there directly.
+
+### Find or create your skills folder
 
 ```bash
 ls ~/.claude/
 ```
 
-You should see a folder called `skills` inside. If it doesn't exist yet, create it:
+If there's no `skills` folder, create one:
 
 ```bash
 mkdir -p ~/.claude/skills
@@ -54,7 +110,7 @@ mkdir -p ~/.claude/skills
 
 ### Copy the skill folders
 
-From inside the downloaded/cloned CIT folder, copy all four skill folders:
+From inside the cloned or downloaded CIT repo:
 
 ```bash
 cp -r cit-config ~/.claude/skills/
@@ -63,152 +119,119 @@ cp -r cit-code ~/.claude/skills/
 cp -r cit-design ~/.claude/skills/
 ```
 
-To confirm they copied correctly:
+Confirm it worked:
 
 ```bash
 ls ~/.claude/skills/
+# Should show: cit-config  cit-chat  cit-code  cit-design
 ```
 
-You should see: `cit-config  cit-chat  cit-code  cit-design`
+No restart needed. Claude Code picks up skills automatically.
 
-### That's it for installation
-
-Claude Code automatically picks up skills from that folder. No restart needed.
-
----
-
-## Step 3: Install on claude.ai
-
-Claude.ai skills are uploaded directly through the Claude interface.
-
-1. Open [claude.ai](https://claude.ai) in your browser
-2. Click your profile icon in the top right corner
-3. Go to **Settings**
-4. Look for the **Skills** section (sometimes listed under **Customization** or **Extensions** depending on your plan)
-5. Click **Add skill** or **Upload skill**
-6. Upload each `SKILL.md` file one at a time. You'll find them inside the folders you downloaded:
-   - `cit-config/SKILL.md`
-   - `cit-chat/SKILL.md`
-   - `cit-code/SKILL.md`
-   - `cit-design/SKILL.md`
-
-> **Note:** The Skills feature requires a Claude Pro or higher plan on claude.ai. If you don't see the Skills section in settings, check your plan at [claude.ai/settings/billing](https://claude.ai/settings/billing).
-
----
-
-## Step 4: First-Time Setup
-
-Once the skills are installed, start a new conversation with Claude and say:
-
+**Confirming it worked:**
+Start a new Claude Code session and type:
 ```
 cit setup
 ```
-
-Claude will ask you three questions:
-
-1. **Visibility** - Should traces be shown to you, or run silently in the background? Shown is recommended if you're new to CIT so you can see it working.
-
-2. **Format** - Tree view or Domino chain? Tree is easier to read for complex webs. Domino is more visual. You can change this later.
-
-3. **Interrupt behavior** - If you type `cit off` mid-task, should Claude finish the current trace first, or stop immediately? Finishing is safer. Stopping immediately is faster.
-
-Claude will save your answers and you won't be asked again.
+Claude should respond with three setup questions.
 
 ---
 
-## Step 5: Test That It's Working
+## First-Time Setup
 
-### Quick test for CIT-Chat
+After installing, start a new conversation and type `cit setup`. Claude will ask you three questions:
 
-Start a conversation and say something like:
+**1. Visibility**
+Should CIT show you the trace before acting, or run it silently?
 
+Recommended for new users: show the trace. This way you can see it working and verify the cascade maps look right before trusting them.
+
+**2. Format**
+Tree view or Domino chain?
+
+Tree is easier to read when a change has lots of connections branching in different directions. Domino is more visual and reads left to right, but it auto-switches to Tree when a path gets longer than 8 nodes. Either is fine. You can change this later with `cit settings`.
+
+**3. Interrupt behavior**
+If you type `cit off` mid-task, should CIT finish the current trace first or stop immediately?
+
+- Finish first: safer. The action proceeds with full cascade awareness.
+- Stop immediately: faster, but the current action proceeds without a complete trace.
+
+Your answers are saved. You won't be asked again unless you type `cit settings` to change them.
+
+---
+
+## Testing That It Works
+
+### Test CIT-Chat
+
+Start a conversation and say:
 ```
 I'm building a todo app. I only have 3 days and no budget for paid services.
 ```
 
-Then follow up with:
-
+Then follow up:
 ```
-Actually I think we should use Firebase for the database.
+Actually let's use Firebase for the database.
 ```
 
-CIT-Chat should trace the cascade impact on your stated constraints (3 days, no budget) before giving you a recommendation. If it does, it's working.
+CIT-Chat should trace the cascade impact on your constraints (3 days, no budget) before responding. If you see a trace with anchor types and risk levels, it's working.
 
-### Quick test for CIT-Code
+### Test CIT-Code
 
-Open a project in Claude Code and ask:
-
+Open a project in Claude Code and say:
 ```
 I want to update the user settings function. Run a CIT trace before touching anything.
 ```
 
-Claude should classify the triage level, map the cascade across files, flag any blind spots, and only then propose changes. If you get the structured trace output with tiers labeled, it's working.
+You should get a triage classification, a tiered cascade map with confidence labels, and any Tier 3 items flagged for manual verification before any code is written.
 
-### Quick test for CIT-Design
+### Test CIT-Design
 
-In a project with any component file, ask:
-
+In a project with any component file, say:
 ```
 I want to change the primary color token. Run a CIT trace first.
 ```
 
-Claude should build a token ownership map, trace affected components, flag state and breakpoint risks, and check contrast before making any changes.
+You should get a token ownership trace, a state matrix risk check across all 8 interaction states, and a breakpoint risk check before any changes are made.
 
 ---
 
 ## Useful Commands
 
-Once CIT is installed, these commands work in any conversation:
+Once installed, these work in any conversation:
 
 | Command | What it does |
 |---|---|
+| `cit setup` | Run first-time setup |
 | `cit status` | Check if CIT is on or off |
-| `cit settings` | Review or change your setup |
-| `cit off` | Turn CIT off for this conversation |
-| `cit on` | Turn it back on |
-| `cit rules` | See your saved Persistent User Rules (CIT-Chat) |
+| `cit settings` | Review or change your preferences |
+| `cit off` | Disable CIT for this conversation |
+| `cit on` | Re-enable CIT |
+| `cit rules` | See your saved Persistent User Rules |
 
 ---
 
-## Installing Individual Skills
+## Installing Only Some Skills
 
-You don't have to install all four. Each skill works on its own.
+You don't have to install all four. Each works on its own.
 
-- **Just using Claude Code for coding?** Install `cit-config` and `cit-code`.
-- **Just using claude.ai for chat?** Install `cit-config` and `cit-chat`.
-- **Working on UI/UX?** Install `cit-config` and `cit-design`.
+- Coding only: install `cit-config` and `cit-code`
+- Chat and reasoning: install `cit-config` and `cit-chat`
+- Design work: install `cit-config` and `cit-design`
 
-If you install `cit-config` first, any other CIT skill you add later will automatically pick up your settings. If you skip `cit-config`, each skill will run its own setup the first time and create a shared config that later skills will find.
-
----
-
-## Something Not Working?
-
-**Claude doesn't seem to know about CIT after install:**
-- On Claude Code: double check the skill folders are in `~/.claude/skills/` and each folder contains a `SKILL.md` file. Run `ls ~/.claude/skills/cit-code/` to confirm.
-- On claude.ai: try starting a fresh conversation. Skills load at the start of a session.
-
-**CIT-Chat rules aren't persisting between conversations:**
-- Go to claude.ai Settings and confirm that Memory is turned ON. CIT-Chat relies on Claude's memory system to save your rules between sessions. Without memory enabled, rules reset each conversation.
-
-**The trace isn't showing up:**
-- Type `cit status` to check if CIT is enabled
-- Type `cit settings` to check if `CIT_SHOW` is set to ON
-- If it's set to OFF, your traces are running silently. Type `cit settings` and switch to ON.
-
-**You're on claude.ai and don't see a Skills section in settings:**
-- Skills require a Pro plan or higher. Check your plan at [claude.ai/settings/billing](https://claude.ai/settings/billing).
+If you install `cit-config` first, any other skill you add later picks up your settings automatically. If you skip it, each skill runs its own setup the first time and creates a shared config that later skills will find.
 
 ---
 
 ## Keeping CIT Updated
 
-When a new version is released, repeat Steps 1 and 2. The new skill files will replace the old ones. Your saved config and invariants in CLAUDE.md won't be affected.
+When a new version is released, repeat the install steps with the new files. Your saved config and architectural invariants in CLAUDE.md won't be affected by the update.
 
-To check the latest version: [github.com/AstorisTheBrave/CIT-Cascade-Impact-Trace-for-Claude](https://github.com/AstorisTheBrave/CIT-Cascade-Impact-Trace-for-Claude)
+To check for updates: [github.com/AstorisTheBrave/CIT-Cascade-Impact-Trace-for-Claude](https://github.com/AstorisTheBrave/CIT-Cascade-Impact-Trace-for-Claude)
 
 ---
 
 ## Want to Understand the Full Design?
 
-Read [BLUEPRINT.md](./BLUEPRINT.md). It covers every design decision made for CIT, what alternatives were rejected, and what limitations each decision carries. If you want to contribute or just want to understand why CIT works the way it does, the blueprint is the place to start.
+Read [BLUEPRINT.md](./BLUEPRINT.md). It covers every design decision, what was tried and rejected, and what limitations each decision carries. If you want to contribute or just want to understand why CIT works the way it does, start there.
