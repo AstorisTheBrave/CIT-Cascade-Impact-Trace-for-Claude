@@ -1,5 +1,7 @@
 # CIT: Cascade Impact Trace
 
+![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg) ![Works with Claude](https://img.shields.io/badge/Works%20with-Claude-orange.svg) ![Platform](https://img.shields.io/badge/Platform-Claude%20Desktop%20%7C%20claude.ai%20%7C%20Claude%20Code-blueviolet.svg) ![Version](https://img.shields.io/badge/Version-1.0.0-brightgreen.svg)
+
 > *"You cannot change one register without understanding what happens to all the others."*
 
 CIT is a set of Claude skills built around one discipline: **before you change anything, map everything it touches, all the way to the last domino.**
@@ -11,7 +13,8 @@ Most AI coding and chat agents fix the bug you point at and call it a day. CIT e
 ## Quick Links
 
 - [**INSTALL.md**](./INSTALL.md) - Full step-by-step setup for Windows, Mac, and Linux
-- [**BLUEPRINT.md**](./BLUEPRINT.md) - Every design decision, tradeoff, and honest limitation documented in full. Read this before contributing.
+- [**BLUEPRINT.md**](./BLUEPRINT.md) - Every design decision, tradeoff, and honest limitation. Read this before contributing.
+- [**CHANGELOG.md**](./CHANGELOG.md) - Full version history
 
 ---
 
@@ -148,6 +151,7 @@ CIT/
 ├── README.md               <- You are here
 ├── INSTALL.md              <- Full install guide for Windows, Mac, and Linux
 ├── BLUEPRINT.md            <- Full design decisions and reasoning
+├── CHANGELOG.md            <- Version history
 ├── CONTRIBUTING.md         <- How to contribute
 ├── downloads/
 │   ├── cit-config.zip      <- Upload this first
