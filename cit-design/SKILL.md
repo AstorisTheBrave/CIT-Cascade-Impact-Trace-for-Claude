@@ -1,11 +1,11 @@
 ---
 name: cit-design
-description: Cascade Impact Trace for UI/UX design. Before changing any design token, component, layout, or visual system, CIT-Design traces every component that consumes it, every interaction state affected, and every breakpoint at risk — then maps conflicts before any implementation. Works in two modes: Automated Trace for code-based design (React, Tailwind, CSS) and Collaborative Trace for Figma. Use this skill any time a design change touches a shared token, a reused component, or a system-level visual decision. Trigger on any component edit, color change, spacing update, typography change, or layout modification.
+description: Cascade Impact Trace for UI/UX design. Before changing any design token, component, layout, or visual system, CIT-Design traces every component that consumes it, every interaction state affected, and every breakpoint at risk - then maps conflicts before any implementation. Works in two modes: Automated Trace for code-based design (React, Tailwind, CSS) and Collaborative Trace for Figma. Use this skill any time a design change touches a shared token, a reused component, or a system-level visual decision. Trigger on any component edit, color change, spacing update, typography change, or layout modification.
 ---
 
-# CIT-Design — Cascade Impact Trace for Design
+# CIT-Design: Cascade Impact Trace for Design
 
-Before changing any design element, map its full blast radius — across tokens, components, interaction states, and breakpoints. Design failures don't throw errors. They look wrong at 768px on a Tuesday and nobody catches it until a user screenshots it. CIT-Design finds them first.
+Before changing any design element, map its full blast radius across tokens, components, interaction states, and breakpoints. Design failures don't throw errors. They look wrong at 768px on a Tuesday and nobody catches it until a user screenshots it. CIT-Design finds them first.
 
 ---
 
@@ -16,23 +16,23 @@ Check for `[CIT-CONFIG]` in CLAUDE.md (Claude Code) or Claude Memory (claude.ai)
 If not found, use ask_user_input:
 - "Should I show you the design cascade trace before making changes, or run it silently?"
   - Options: "Show me (recommended)", "Run silently"
-- "Are you working in code (React/Tailwind/CSS) or Figma?"
-  - Options: "Code-based design", "Figma", "Both"
+- "Are you working in code or Figma?"
+  - Options: "Code-based design (React/Tailwind/CSS)", "Figma", "Both"
 
-This determines which mode to use (see Two Modes below).
+The answer determines which mode to use.
 
 ---
 
-## Two Modes — Not Equivalent
+## Two Modes: Not Equivalent
 
-### Automated Trace Mode (Code-based: React, Tailwind, CSS)
+### Automated Trace Mode (code-based: React, Tailwind, CSS)
 Full automated tracing. Token ownership map. State matrix. Breakpoint matrix. CIT reads the actual files.
 
 ### Collaborative Trace Mode (Figma)
-Claude cannot read Figma files. CIT provides the inspection framework — the user provides the eyes. Claude synthesizes the cascade map from reported findings.
+Claude cannot read Figma files. CIT provides the inspection framework and the user provides the eyes. Claude synthesizes the cascade map from reported findings.
 
-**Every Collaborative Trace output ends with this disclosure — no exceptions:**
-> *"This map reflects what you reported. Claude cannot verify Figma content independently. Treat this as a guided checklist, not a guaranteed trace."*
+**Every Collaborative Trace output ends with this disclosure - no exceptions:**
+> "This map reflects what you reported. Claude cannot verify Figma content independently. Treat this as a guided checklist, not a guaranteed trace."
 
 These modes are not equivalent. Never present them as equal. Automated is more reliable. Users choose based on their workflow.
 
@@ -61,7 +61,7 @@ typography.label:
 [/CIT-TOKEN-MAP]
 ```
 
-When a token is changed, consult the Token Ownership Map before touching anything else.
+When a token changes, consult the Token Ownership Map before touching anything else.
 
 ---
 
@@ -73,9 +73,9 @@ Every design change is evaluated across both axes before implementation.
 default | hover | focus | active | disabled | error | loading | empty
 
 **Breakpoints (4):**
-mobile (320–767px) | tablet (768–1023px) | desktop (1024–1439px) | wide (1440px+)
+mobile (320-767px) | tablet (768-1023px) | desktop (1024-1439px) | wide (1440px+)
 
-For every component in the cascade, flag which specific state + breakpoint combinations are at risk — not just which component.
+For every component in the cascade, flag which specific state and breakpoint combinations are at risk, not just which component.
 
 ---
 
@@ -91,9 +91,9 @@ For every component in the cascade, flag which specific state + breakpoint combi
 
 ---
 
-## CIT-MAP Block — Self-Documenting Artifacts
+## CIT-MAP Block: Self-Documenting Artifacts
 
-Every component generated in Automated Mode includes a CIT-MAP block. The component carries its own dependency map — no external persistence needed.
+Every component generated in Automated Mode includes a CIT-MAP block. The component carries its own dependency map with no external persistence needed.
 
 ```jsx
 /* ================================================
@@ -102,11 +102,11 @@ Every component generated in Automated Mode includes a CIT-MAP block. The compon
    Last Traced: [ISO date]
    File Last Modified: [ISO date]
 
-   ⚠️ STALE CHECK: If file was modified after Last Traced,
+   STALE CHECK: If file was modified after Last Traced,
    this map may not reflect current state. Re-trace before trusting.
 
    Token Dependencies:
-   - [token.name] → [what it affects in this component]
+   - [token.name] -> [what it affects in this component]
 
    Component Connections:
    - Used by: [list of parent components]
@@ -130,7 +130,7 @@ Every component generated in Automated Mode includes a CIT-MAP block. The compon
 Every time CIT-Design loads a file containing a CIT-MAP block, it compares `Last Traced` against the file's last modified date.
 
 If the file was modified after the last trace:
-> *"⚠️ CIT-MAP is potentially stale. This file was modified after the last trace. Re-tracing before proceeding."*
+> "⚠️ CIT-MAP is potentially stale. This file was modified after the last trace. Re-tracing before proceeding."
 
 Re-trace automatically. Update the CIT-MAP block after the trace completes.
 
@@ -138,49 +138,37 @@ Re-trace automatically. Update the CIT-MAP block after the trace completes.
 
 ## Automated Trace Protocol
 
-### Step 1 — Classify (Triage)
-State classification and reason.
+**Step 1 - Classify:** State triage level and reason.
 
-### Step 2 — Token Impact
-Consult Token Ownership Map. List every consumer of every token touched by the change.
+**Step 2 - Token Impact:** Consult Token Ownership Map. List every consumer of every token touched by the change.
 
-### Step 3 — Component Cascade
-For each consumer, trace to its dependents. Mark confidence:
-- Files in context → HIGH
-- Inferred from imports → INFERRED
+**Step 3 - Component Cascade:** For each consumer, trace to its dependents. Mark confidence: HIGH for files in context, INFERRED for files not in context.
 
-### Step 4 — State Matrix
-For each affected component, evaluate all 8 states. Flag risks.
+**Step 4 - State Matrix:** For each affected component, evaluate all 8 states. Flag risks.
 
-### Step 5 — Breakpoint Matrix
-For each affected component, evaluate all 4 breakpoints. Flag risks.
+**Step 5 - Breakpoint Matrix:** For each affected component, evaluate all 4 breakpoints. Flag risks.
 
-### Step 6 — Contrast Check (Major only)
-If color token changed, check contrast ratios for:
-- Text on new background color
-- Disabled state (often lowest contrast)
-- Focus ring visibility
-- Dark mode variant if applicable
+**Step 6 - Contrast Check (Major only):** If a color token changed, check contrast ratios for text on new background, disabled state, focus ring visibility, and dark mode variant if applicable.
 
 ---
 
 ## Collaborative Trace Protocol (Figma)
 
-Questions are asked in one structured block upfront — not one at a time. User answers all, Claude synthesizes once.
+Questions are asked in one structured block upfront, not one at a time. User answers all, Claude synthesizes once.
 
 **Example for a primary color change:**
-> *"Before I build the cascade map I need your eyes on the following. Check each and report back:*
+> "Before I build the cascade map I need your eyes on the following. Check each and report back:
 >
-> *1. Disabled state — does the new color maintain sufficient contrast for disabled text/icons?*
-> *2. Dark mode — does a dark mode variant exist and does it use this token?*
-> *3. Icon-only variant — is there an icon-only version of this component and is it affected?*
-> *4. Modal context — is this component used inside modals where the background color differs?*
-> *5. Focus ring — is the focus ring color derived from the same token?*
-> *6. All breakpoints — does the component behave differently at mobile/tablet/desktop/wide?*
+> 1. Disabled state - does the new color maintain sufficient contrast for disabled text and icons?
+> 2. Dark mode - does a dark mode variant exist and does it use this token?
+> 3. Icon-only variant - is there an icon-only version of this component and is it affected?
+> 4. Modal context - is this component used inside modals where the background color differs?
+> 5. Focus ring - is the focus ring color derived from the same token?
+> 6. All breakpoints - does the component behave differently at mobile, tablet, desktop, or wide?
 >
-> *Report what you find and I'll build the cascade map from your findings."*
+> Report what you find and I'll build the cascade map from your findings."
 
-After user responds, synthesize into a cascade map and append the Collaborative Mode disclosure.
+After the user responds, synthesize into a cascade map and append the Collaborative Mode disclosure.
 
 ---
 
@@ -191,7 +179,7 @@ After user responds, synthesize into a cascade map and append the Collaborative 
 ```
 ## CIT Design Trace [Moderate|Major]
 Mode: Automated | Collaborative
-Triage: [level] — [reason]
+Triage: [level] - [reason]
 
 ### Token Impact
 [Which tokens are touched and all their consumers]
@@ -200,19 +188,19 @@ Triage: [level] — [reason]
 [Tree or Domino map with confidence labels]
 
 ### State Matrix Risks
-[Component] → [state]: [specific risk]
+[Component] -> [state]: [specific risk]
 
 ### Breakpoint Matrix Risks
-[Component] → [breakpoint]: [specific risk]
+[Component] -> [breakpoint]: [specific risk]
 
 ### Contrast Check (Major only)
 [Pass/Fail per combination]
 
-## Conflicts & Risks
+## Conflicts and Risks
 [Contrast failures, layout collisions, token circular dependencies, or "None found"]
 
 ## Implementation
-[Design change — only after full trace complete]
+[Design change - only after full trace is complete]
 ```
 
 ---
@@ -223,8 +211,8 @@ When a token feeds a component that defines a variant that overrides the origina
 
 ```
 ⚠️ TOKEN LOOP DETECTED
-Loop: color.primary → PrimaryButton → PrimaryButton--dark variant → overrides color.primary
-Treat loop as atomic unit. Changes to color.primary must account for the dark variant override simultaneously.
+Loop: color.primary -> PrimaryButton -> PrimaryButton--dark variant -> overrides color.primary
+Treating loop as atomic unit. Changes to color.primary must account for the dark variant override simultaneously.
 ```
 
 ---
@@ -232,8 +220,8 @@ Treat loop as atomic unit. Changes to color.primary must account for the dark va
 ## Permanent Disclosure
 
 > **CIT-Design honest limits:**
-> - Collaborative Trace Mode inherits user error — if your Figma inspection misses something, the map reflects that miss
-> - CIT-MAP blocks go stale when files are edited outside Claude — stale maps with authority are dangerous — always re-trace after manual edits
-> - In mixed teams, CIT-MAP blocks are Claude's working notes, not team documentation
-> - Enforcement relies on Claude's discipline, not a hard constraint
-> - Contrast checks are Claude's calculation based on reported colors — verify with a dedicated accessibility tool for production
+> - Collaborative Trace Mode inherits user error. If your Figma inspection misses something, the map reflects that miss.
+> - CIT-MAP blocks go stale when files are edited outside Claude. Stale maps presented with authority are more dangerous than no maps. Always re-trace after manual edits.
+> - In mixed teams, CIT-MAP blocks are Claude's working notes, not team documentation.
+> - Enforcement relies on Claude's discipline, not a hard constraint.
+> - Contrast checks are Claude's calculation based on reported colors. Verify with a dedicated accessibility tool for production.

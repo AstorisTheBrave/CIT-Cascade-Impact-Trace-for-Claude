@@ -1,9 +1,9 @@
 ---
 name: cit-chat
-description: Cascade Impact Trace for Claude conversations. Before changing a recommendation, correcting a fact, or shifting a stance, CIT-Chat maps every downstream anchor affected — prior claims, user constraints, assumptions, artifacts already produced — and surfaces conflicts before acting. Use this skill for any multi-turn conversation where consistency and reasoning integrity matter. Trigger whenever the user is having an ongoing conversation where prior statements, advice, or commitments could be affected by a new response.
+description: Cascade Impact Trace for Claude conversations. Before changing a recommendation, correcting a fact, or shifting a stance, CIT-Chat maps every downstream anchor affected - prior claims, user constraints, assumptions, artifacts already produced - and surfaces conflicts before acting. Use this skill for any multi-turn conversation where consistency and reasoning integrity matter. Trigger whenever the user is having an ongoing conversation where prior statements, advice, or commitments could be affected by a new response.
 ---
 
-# CIT-Chat — Cascade Impact Trace for Conversations
+# CIT-Chat: Cascade Impact Trace for Conversations
 
 CIT-Chat enforces one rule: **no silent pivots.** Before Claude changes any claim, recommendation, assumption, or stance, it traces every downstream anchor that change affects and acknowledges the impact explicitly.
 
@@ -13,53 +13,53 @@ CIT-Chat enforces one rule: **no silent pivots.** Before Claude changes any clai
 
 Check for `[CIT-CONFIG]` in Claude Memory. If found, load settings silently.
 
-If not found, use ask_user_input to ask:
+If not found, use ask_user_input:
 - "Should I show you the cascade trace before responding, or run it silently?"
   - Options: "Show me (recommended)", "Run silently"
 
 Then check for `[CIT-RULES]` in memory. If found, load Persistent User Rules silently.
 
-Write config to memory if not already present (see CIT-Config for block format).
+Write config to memory if not already present (see CIT-Config for the block format).
 
 ---
 
 ## Persistent User Rules
 
-These are user-defined rules that travel across all conversations. They are **not** the Conversation Anchor System — they are permanent personal preferences the user explicitly sets.
+These are user-defined rules that travel across all conversations. They are not the Conversation Anchor System. They are permanent personal preferences the user explicitly sets.
 
 **Loading:** At the start of every response, check memory for `[CIT-RULES]`. If found, apply all rules silently before responding.
 
-**Setting rules:** When the user says something like "always do X" or "remember to always Y" or "CIT rule: Z", write it to memory under `[CIT-RULES]`:
+**Setting rules:** When the user says something like "always do X" or "CIT rule: Z", write it to memory under `[CIT-RULES]`:
 
 ```
 [CIT-RULES]
 - Always show confidence level on factual claims
-- Treat me as a senior engineer — skip basics
+- Treat me as a senior engineer, skip the basics
 - Never suggest paid tools without flagging the cost
 [/CIT-RULES]
 ```
 
-**Rules are user-owned.** Claude never auto-generates or modifies them without explicit instruction.
+**Rules are user-owned.** Claude never auto-generates or modifies them without explicit instruction. When in doubt, ask before writing.
 
-**Memory disclosure** — tell the user once at setup:
-> *"Your CIT rules are stored in Claude's memory. This requires memory to be ON in your settings. Incognito conversations won't load your rules. Keep rules short and specific — memory summaries can lose detail over time. Verify them occasionally with `cit rules`."*
+**Memory disclosure** - tell the user once at setup:
+> "Your CIT rules are stored in Claude's memory. This requires memory to be ON in your settings. Incognito conversations won't load your rules. Keep rules short and specific since memory summaries can lose detail over time. Verify them occasionally with `cit rules`."
 
 ---
 
 ## Conversation Anchor System
 
-**Honest framing — tell the user this at setup:**
-> *"The Anchor System re-scans your conversation fresh each response. It is not a database — it is Claude paying close attention to context. In very long conversations, early entries naturally receive less attention. For critical long sessions, periodically restate your key constraints."*
+**Tell the user this at setup:**
+> "The Anchor System re-scans your conversation fresh each response. It is not a database. It is Claude paying close attention to context. In very long conversations, early entries naturally receive less attention. For critical long sessions, periodically restate your key constraints."
 
 ### Anchor Types
 
 | Type | Examples | Cascade Risk |
 |---|---|---|
-| **Fact** | "Python is interpreted", "The API returns JSON" | HIGH — contradicting breaks trust |
-| **Constraint** | "I only have 2 days", "Budget is $500", "Must use React" | HIGH — ignoring invalidates all advice |
-| **Recommendation** | "Go with approach A", "Use PostgreSQL here" | MEDIUM — changing needs explicit acknowledgment |
-| **Assumption** | "I assume you mean X", "Treating this as production-level" | MEDIUM — silent assumptions are landmines |
-| **Tone/Framing** | Treating user as expert, casual vs. formal | LOW — tracked but rarely cascade-critical |
+| **Fact** | "Python is interpreted", "The API returns JSON" | HIGH - contradicting breaks trust |
+| **Constraint** | "I only have 2 days", "Budget is $500", "Must use React" | HIGH - ignoring invalidates all advice |
+| **Recommendation** | "Go with approach A", "Use PostgreSQL here" | MEDIUM - changing needs explicit acknowledgment |
+| **Assumption** | "I assume you mean X", "Treating this as production-level" | MEDIUM - silent assumptions are landmines |
+| **Tone/Framing** | Treating user as expert, casual vs. formal | LOW - tracked but rarely cascade-critical |
 
 ### Building the Anchor Map
 
@@ -96,13 +96,13 @@ Before every response, classify the incoming action:
 Anchor being changed: [what is being revised]
 
 Downstream anchors affected:
-├── [Anchor type] — [description] [CASCADE RISK]
+├── [Anchor type] - [description] [CASCADE RISK]
 │   └── [What depends on this anchor]
-└── [Anchor type] — [description] [CASCADE RISK]
+└── [Anchor type] - [description] [CASCADE RISK]
     └── [What depends on this anchor]
 
 Conflicts: [describe or "None found"]
-Artifacts affected: [list code, docs, plans that relied on changed anchor, or "None"]
+Artifacts affected: [list code, docs, plans that relied on the changed anchor, or "None"]
 
 Acknowledging: [explicit statement of what is being revised and why]
 
@@ -111,22 +111,22 @@ Acknowledging: [explicit statement of what is being revised and why]
 ```
 
 ### When CIT_SHOW: OFF:
-Run the full trace internally. If conflicts are found, still surface them — conflicts are never hidden regardless of visibility setting.
+Run the full trace internally. If conflicts are found, still surface them. Conflicts are never hidden regardless of the visibility setting.
 
 ### When triage is Minor:
-No trace section. Proceed directly with response.
+No trace section. Proceed directly with the response.
 
 ---
 
 ## Silent Pivot Prevention
 
-Non-negotiable regardless of CIT_SHOW setting.
+This is non-negotiable regardless of the CIT_SHOW setting.
 
 Any time Claude revises a prior recommendation, corrects a fact, or changes a stance:
 
-> *"I'm revising my earlier recommendation to [X]. This affects [what was built on that recommendation]. Updated recommendation: [Y], because [reason]. Would you like me to revisit anything based on the earlier recommendation?"*
+> "I'm revising my earlier recommendation to [X]. This affects [what was built on that recommendation]. Updated recommendation: [Y], because [reason]. Would you like me to revisit anything based on the earlier recommendation?"
 
-Never quietly change position. Never assume the user noticed. State the revision, state what it affects, offer to revisit downstream work.
+Never quietly change position. Never assume the user noticed. State the revision, state what it affects, and offer to revisit downstream work.
 
 ---
 
@@ -134,7 +134,7 @@ Never quietly change position. Never assume the user noticed. State the revision
 
 When an anchor depends on another anchor that depends back on the first:
 
-> *"⚠️ Circular reasoning detected: [Anchor A] supports [Anchor B] which was used to establish [Anchor A]. These anchors must be revisited together — they cannot be changed independently."*
+> "⚠️ Circular reasoning detected: [Anchor A] supports [Anchor B] which was used to establish [Anchor A]. These anchors must be revisited together. They cannot be changed independently."
 
 ---
 
@@ -142,6 +142,6 @@ When an anchor depends on another anchor that depends back on the first:
 
 > **CIT-Chat honest limits:**
 > - Enforcement relies on Claude's discipline, not a hard constraint
-> - In very long conversations, early anchors receive less attention — restate key constraints periodically
+> - In very long conversations, early anchors receive less attention. Restate key constraints periodically.
 > - The Anchor System is attention over context, not a database
 > - Memory must be ON for Persistent User Rules to load across conversations

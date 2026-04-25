@@ -1,6 +1,6 @@
-# CIT — Full Design Blueprint v2.0
+# CIT - Full Design Blueprint v2.0
 
-This document records every design decision made for CIT, why it was made, what alternatives were rejected, and what honest limitations each decision carries. This is a living document — it updates as the skills improve.
+This document records every design decision made for CIT, why it was made, what alternatives were rejected, and what honest limitations each decision carries. This is a living document - it updates as the skills improve.
 
 ---
 
@@ -17,7 +17,7 @@ C was not designed to support that change
 ...
 ```
 
-The analogy that crystallized the solution: the four registers in a CPU — MDR, MAR, PC, ACC. They work together. Change one without understanding the others and the system breaks in ways that feel random but aren't. CIT applies this thinking to every domain Claude operates in.
+The analogy that crystallized the solution: the four registers in a CPU - MDR, MAR, PC, ACC. They work together. Change one without understanding the others and the system breaks in ways that feel random but aren't. CIT applies this thinking to every domain Claude operates in.
 
 ---
 
@@ -25,11 +25,11 @@ The analogy that crystallized the solution: the four registers in a CPU — MDR,
 
 Before any action, CIT enforces five steps:
 
-1. **Node Identification** — every component involved in the proposed change
-2. **Web Mapping** — every connection outward from each node
-3. **Domino Simulation** — drop the first domino, follow every path to its end
-4. **Conflict Surfacing** — where two cascade paths collide
-5. **Implementation** — only now act, with the full web mapped
+1. **Node Identification** - every component involved in the proposed change
+2. **Web Mapping** - every connection outward from each node
+3. **Domino Simulation** - drop the first domino, follow every path to its end
+4. **Conflict Surfacing** - where two cascade paths collide
+5. **Implementation** - only now act, with the full web mapped
 
 ---
 
@@ -46,11 +46,11 @@ A single skill would require so many conditionals it would become unreliable. Th
 
 ### Why CIT-Config as a Separate Skill
 
-Three skills sharing a philosophy means three places where that philosophy could drift independently over time. CIT-Config is the single source of truth. One edit propagates everywhere. CIT practices what it preaches — it does not allow its own components to go out of sync.
+Three skills sharing a philosophy means three places where that philosophy could drift independently over time. CIT-Config is the single source of truth. One edit propagates everywhere. CIT practices what it preaches - it does not allow its own components to go out of sync.
 
-### The Enforcement Problem — Why We Cannot Fully Solve It
+### The Enforcement Problem - Why We Cannot Fully Solve It
 
-CIT cannot technically force Claude to complete a trace before acting. There is no compiler, no runtime error, no unit test for "did Claude actually trace." The structural response template — requiring CIT Trace and Conflicts sections before Implementation — is the closest available enforcement mechanism. It makes shortcuts visible rather than preventing them. This limitation is documented in every skill permanently.
+CIT cannot technically force Claude to complete a trace before acting. There is no compiler, no runtime error, no unit test for "did Claude actually trace." The structural response template - requiring CIT Trace and Conflicts sections before Implementation - is the closest available enforcement mechanism. It makes shortcuts visible rather than preventing them. This limitation is documented in every skill permanently.
 
 ### The Structural Response Template
 
@@ -60,7 +60,7 @@ CIT cannot technically force Claude to complete a trace before acting. There is 
 ## Implementation
 ```
 
-Claude cannot write Implementation without completing the sections above. This works because the format is the enforcement — not a separate check. The limitation: Claude can technically fill in the template without doing real tracing. CIT cannot prevent this. It can only make it visible when it happens.
+Claude cannot write Implementation without completing the sections above. This works because the format is the enforcement - not a separate check. The limitation: Claude can technically fill in the template without doing real tracing. CIT cannot prevent this. It can only make it visible when it happens.
 
 ---
 
@@ -86,10 +86,10 @@ Claude has a natural bias toward Minor classification because Minor means less w
 
 ## Loop Detection
 
-When a node is reached via a different path that was already visited, CIT does not just warn — it restructures the implementation plan:
+When a node is reached via a different path that was already visited, CIT does not just warn - it restructures the implementation plan:
 
 1. Identify loop members as a single atomic unit
-2. Find the weakest seam — the least coupled connection in the loop
+2. Find the weakest seam - the least coupled connection in the loop
 3. Suggest breaking the loop before implementing
 4. If unbreakable, plan changes to all loop members simultaneously
 
@@ -103,7 +103,7 @@ The domino chain is capped at 8 nodes per path. Beyond 8, auto-switches to Tree 
 
 > "Chain exceeds display limit at node 8. Switching to Tree. Remaining nodes: [list]."
 
-Why 8: readability threshold. Why never silent: the user must know the chain continued — they cannot assume the domino format shows everything.
+Why 8: readability threshold. Why never silent: the user must know the chain continued - they cannot assume the domino format shows everything.
 
 ---
 
@@ -124,8 +124,8 @@ Confidence labels were added after auditing that "Tier 2" in the original design
 | Tier | Label | Meaning |
 |---|---|---|
 | Tier 1 | HIGH confidence | Files in context, directly analyzed |
-| Tier 2 | INFERRED — verify before trusting | Reasoned from Tier 1, files not seen |
-| Tier 3 | LOW confidence — human verification required | Environmental, cannot be auto-traced |
+| Tier 2 | INFERRED - verify before trusting | Reasoned from Tier 1, files not seen |
+| Tier 3 | LOW confidence - human verification required | Environmental, cannot be auto-traced |
 
 ### File Request Protocol
 
@@ -167,7 +167,7 @@ User-owned. User-written. Claude never auto-generates them. Stored in Claude Mem
 
 ### Conversation Anchor System
 
-Fresh re-scan each response, not maintained state. Honest framing: this is transformer attention over context, not a database. Early entries in long conversations genuinely receive less attention. The fresh-scan framing sounds reliable — it isn't guaranteed in very long sessions.
+Fresh re-scan each response, not maintained state. Honest framing: this is transformer attention over context, not a database. Early entries in long conversations genuinely receive less attention. The fresh-scan framing sounds reliable - it isn't guaranteed in very long sessions.
 
 ### Silent Pivot Prevention
 
@@ -187,13 +187,13 @@ Any change to a prior recommendation, fact, or assumption triggers explicit ackn
 
 ## CIT-Design Specific Decisions
 
-### Two Modes — Why They Are Not Equivalent
+### Two Modes - Why They Are Not Equivalent
 
 Automated Trace Mode (code-based design) and Collaborative Trace Mode (Figma/claude.ai) were initially described as equivalent options. Audit identified this as dishonest. Claude cannot read Figma files. Collaborative Mode is Claude providing an inspection framework and the user providing the eyes. Calling them equivalent would give users false confidence in Collaborative outputs.
 
 Resolution: rename, honest disclosure on every Collaborative output, never imply parity.
 
-### Self-Documenting Artifacts — CIT-MAP
+### Self-Documenting Artifacts - CIT-MAP
 
 The artifact carries its own dependency map. No external persistence needed for code-based design. The CIT-MAP block includes:
 - Token dependencies
@@ -205,7 +205,7 @@ The artifact carries its own dependency map. No external persistence needed for 
 
 ### Stale Detection
 
-CIT-MAP compares Last Traced date against file's last modified date on every load. If file was modified after last trace, re-trace is triggered before trusting the map. Stale maps presented with authority are worse than no maps — they create false confidence.
+CIT-MAP compares Last Traced date against file's last modified date on every load. If file was modified after last trace, re-trace is triggered before trusting the map. Stale maps presented with authority are worse than no maps - they create false confidence.
 
 ### Mixed Team Disclosure
 
@@ -213,7 +213,7 @@ CIT-MAP works best in solo or Claude-centric workflows. In teams using multiple 
 
 > "In mixed teams, treat CIT-MAP as Claude's working notes, not team documentation."
 
-### Figma Collaborative Mode — Upfront Block Questions
+### Figma Collaborative Mode - Upfront Block Questions
 
 Questions asked in one structured block, not one at a time. User answers everything, Claude synthesizes once. This reduces round-trip friction while maintaining rigor.
 
@@ -248,7 +248,7 @@ These live in every skill file. Never hidden:
 
 ## Audit History
 
-CIT went through two full self-audits before any code was written. Both audits applied the CIT principle to CIT itself — tracing every design decision for downstream consequences. The flaws found and resolved are documented above. The two that cannot be engineered away are documented as permanent disclosures:
+CIT went through two full self-audits before any code was written. Both audits applied the CIT principle to CIT itself - tracing every design decision for downstream consequences. The flaws found and resolved are documented above. The two that cannot be engineered away are documented as permanent disclosures:
 
 1. Enforcement relies on Claude's discipline, not a hard constraint
 2. Long conversation attention degradation in CIT-Chat
