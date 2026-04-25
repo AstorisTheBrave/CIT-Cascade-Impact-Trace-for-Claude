@@ -4,13 +4,13 @@
 
 CIT is a set of Claude skills built around one discipline: **before you change anything, map everything it touches, all the way to the last domino.**
 
-Most AI coding and chat agents fix the bug you point at and call it a day. CIT exists because that's not enough. Every change has a blast radius. CIT maps it completely before a single line is written or a single word is changed.
+Most AI coding and chat agents fix the bug you point at and call it a day. CIT exists because that is not enough. Every change has a blast radius. CIT maps it completely before a single line is written or a single word is changed.
 
 ---
 
 ## Quick Links
 
-- [**INSTALL.md**](./INSTALL.md) - Full step-by-step setup from download to testing
+- [**INSTALL.md**](./INSTALL.md) - Full step-by-step setup for Windows, Mac, and Linux
 - [**BLUEPRINT.md**](./BLUEPRINT.md) - Every design decision, tradeoff, and honest limitation documented in full. Read this before contributing.
 
 ---
@@ -28,7 +28,7 @@ C was not designed to support that change
 ...
 ```
 
-This isn't a skill problem. It's a visibility problem. AI agents fix the source without mentally executing the interactions between components. CIT forces that execution to happen first, every time.
+This is not a skill problem. It is a visibility problem. AI agents fix the source without mentally executing the interactions between components. CIT forces that execution to happen first, every time.
 
 Think of it like the four registers in a CPU: MDR, MAR, PC, ACC. They all work together. Change one and the others are affected. CIT treats every codebase, conversation, and design system the same way.
 
@@ -89,25 +89,40 @@ settings.js [MODIFIED]
 
 ---
 
-## Installing CIT
+## Platform Support
 
-Full instructions with screenshots and troubleshooting are in [INSTALL.md](./INSTALL.md).
+| Platform | Mac | Windows | Linux |
+|---|---|---|---|
+| Claude Desktop | ✅ | ✅ | Not available |
+| claude.ai (browser) | ✅ | ✅ | ✅ |
+| Claude Code | ✅ | ✅ (via WSL2) | ✅ |
+
+Full install instructions for every platform and OS are in [INSTALL.md](./INSTALL.md).
+
+---
+
+## Installing CIT
 
 ### Short version
 
-**Claude Code:**
+**Claude Desktop or claude.ai (Mac, Windows):**
+Download the zip files from the `downloads/` folder in this repo and upload them through Settings > Customize > Skills.
+
+**Claude Code on Mac or Linux:**
 ```bash
 mkdir -p ~/.claude/skills
 cp -r cit-config cit-chat cit-code cit-design ~/.claude/skills/
 ```
 
-**claude.ai:**
-Upload each `SKILL.md` file through Settings > Skills in the Claude interface.
+**Claude Code on Windows (WSL2):**
+Run the above commands inside your Ubuntu/WSL terminal.
 
 Then start a new conversation and type:
 ```
 cit setup
 ```
+
+Full instructions with troubleshooting for every OS are in [INSTALL.md](./INSTALL.md).
 
 ---
 
@@ -120,9 +135,9 @@ CIT is honest about its limits. Every skill surfaces these at install:
 - **Stale CIT-MAP blocks are dangerous.** Files modified outside Claude after a trace need re-tracing before the map can be trusted.
 - **Tier 2 traces without files present are inferences**, not verified analysis. Always labeled clearly.
 
-This isn't a disclaimer to ignore. It's part of the philosophy: a system that knows its own limits and states them clearly is more trustworthy than one that claims perfection.
+This is not a disclaimer to ignore. It is part of the philosophy: a system that knows its own limits and states them clearly is more trustworthy than one that claims perfection.
 
-The full reasoning behind every decision, including what was tried and rejected, is in [BLUEPRINT.md](./BLUEPRINT.md).
+The full reasoning behind every decision is in [BLUEPRINT.md](./BLUEPRINT.md).
 
 ---
 
@@ -131,17 +146,22 @@ The full reasoning behind every decision, including what was tried and rejected,
 ```
 CIT/
 ├── README.md               <- You are here
-├── INSTALL.md              <- Full installation guide for first timers
+├── INSTALL.md              <- Full install guide for Windows, Mac, and Linux
 ├── BLUEPRINT.md            <- Full design decisions and reasoning
 ├── CONTRIBUTING.md         <- How to contribute
+├── downloads/
+│   ├── cit-config.zip      <- Upload this first
+│   ├── cit-chat.zip
+│   ├── cit-code.zip
+│   └── cit-design.zip
 ├── cit-config/
-│   └── SKILL.md            <- Shared config skill
+│   └── SKILL.md
 ├── cit-chat/
-│   └── SKILL.md            <- CIT for claude.ai conversations
+│   └── SKILL.md
 ├── cit-code/
-│   └── SKILL.md            <- CIT for Claude Code
+│   └── SKILL.md
 └── cit-design/
-    └── SKILL.md            <- CIT for UI/UX design
+    └── SKILL.md
 ```
 
 ---
@@ -159,7 +179,7 @@ CIT/
 
 ## Contributing
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md). Ideas, edge cases, and real-world failure reports are the most valuable contributions. This project was born from exactly that kind of honest feedback.
+See [CONTRIBUTING.md](./CONTRIBUTING.md). Real-world failure reports and edge cases are the most valuable contributions. This project was born from exactly that kind of honest feedback.
 
 Before opening a PR, read [BLUEPRINT.md](./BLUEPRINT.md). Every change should trace back to a design decision documented there.
 
