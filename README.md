@@ -8,6 +8,13 @@ Most AI coding and chat agents fix the bug you point at and call it a day. CIT e
 
 ---
 
+## Quick Links
+
+- [**INSTALL.md**](./INSTALL.md) - Full step-by-step setup from download to testing
+- [**BLUEPRINT.md**](./BLUEPRINT.md) - Every design decision, tradeoff, and honest limitation documented in full. Read this before contributing.
+
+---
+
 ## The Problem CIT Solves
 
 Every recurring bug pattern looks like this:
@@ -84,17 +91,23 @@ settings.js [MODIFIED]
 
 ## Installing CIT
 
-### Recommended: Install all four (CIT-Config + all three skills)
-This gives you shared config across all skills. Set up once and all three stay in sync.
+Full instructions with screenshots and troubleshooting are in [INSTALL.md](./INSTALL.md).
 
-### Installing individual skills
-Each skill works standalone. If CIT-Config isn't present, the skill runs its own first-time setup and creates the config for future skills to find.
+### Short version
 
-### First-time setup
-On first run, CIT asks you three questions:
-1. Show traces visually or run silently?
-2. Tree view or Domino chain?
-3. If you type `cit off` mid-task, should it finish the current trace first or stop immediately?
+**Claude Code:**
+```bash
+mkdir -p ~/.claude/skills
+cp -r cit-config cit-chat cit-code cit-design ~/.claude/skills/
+```
+
+**claude.ai:**
+Upload each `SKILL.md` file through Settings > Skills in the Claude interface.
+
+Then start a new conversation and type:
+```
+cit setup
+```
 
 ---
 
@@ -109,6 +122,8 @@ CIT is honest about its limits. Every skill surfaces these at install:
 
 This isn't a disclaimer to ignore. It's part of the philosophy: a system that knows its own limits and states them clearly is more trustworthy than one that claims perfection.
 
+The full reasoning behind every decision, including what was tried and rejected, is in [BLUEPRINT.md](./BLUEPRINT.md).
+
 ---
 
 ## Repo Structure
@@ -116,6 +131,7 @@ This isn't a disclaimer to ignore. It's part of the philosophy: a system that kn
 ```
 CIT/
 ├── README.md               <- You are here
+├── INSTALL.md              <- Full installation guide for first timers
 ├── BLUEPRINT.md            <- Full design decisions and reasoning
 ├── CONTRIBUTING.md         <- How to contribute
 ├── cit-config/
@@ -144,6 +160,8 @@ CIT/
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md). Ideas, edge cases, and real-world failure reports are the most valuable contributions. This project was born from exactly that kind of honest feedback.
+
+Before opening a PR, read [BLUEPRINT.md](./BLUEPRINT.md). Every change should trace back to a design decision documented there.
 
 ---
 
