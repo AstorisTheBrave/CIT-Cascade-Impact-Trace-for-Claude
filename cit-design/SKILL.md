@@ -1,122 +1,239 @@
 ---
 name: cit-design
-description: Cascade Impact Trace for UI/UX design. Before changing any design token, component, layout, or visual system, CIT-Design traces every component that consumes it, every interaction state affected, and every breakpoint at risk — then maps conflicts before any implementation. Works in two modes: Automated Trace for code-based design (React, Tailwind, CSS) and Collaborative Trace for Figma. Use this skill any time a design change touches a shared token, a reused component, or a system-level visual decision.
+description: Cascade Impact Trace for UI/UX design. Before changing any design token, component, layout, or visual system, CIT-Design traces every component that consumes it, every interaction state affected, and every breakpoint at risk — then maps conflicts before any implementation. Works in two modes: Automated Trace for code-based design (React, Tailwind, CSS) and Collaborative Trace for Figma. Use this skill any time a design change touches a shared token, a reused component, or a system-level visual decision. Trigger on any component edit, color change, spacing update, typography change, or layout modification.
 ---
 
 # CIT-Design — Cascade Impact Trace for Design
 
-> 🔧 **This skill is in development.** See the [CIT repository](https://github.com/) for status updates.
-
-## What This Skill Does
-
-CIT-Design maps the full cascade of any design change across tokens, components, interaction states, and breakpoints before implementation. Every change is evaluated across a full state and breakpoint matrix — not just "which component" but "which states and which breakpoints are at risk."
-
-## Platform
-
-Two modes depending on workflow:
-
-- **Automated Trace Mode** — Claude Code, code-based design (React, Tailwind, CSS)
-- **Collaborative Trace Mode** — claude.ai, Figma-based design
-
-**These modes are not equivalent.** Automated traces components directly. Collaborative provides the inspection framework — the user provides the eyes. Never treat them as the same level of reliability.
-
-## What CIT-Design Cannot Promise
-
-- Collaborative Trace Mode inherits user error — if you miss something in your Figma inspection, the map reflects that miss
-- CIT-MAP blocks go stale when files are edited outside Claude — re-trace after any manual edits
-- In mixed teams, CIT-MAP blocks are Claude's working notes, not team documentation
-- Enforcement relies on Claude's discipline, not a hard constraint
+Before changing any design element, map its full blast radius — across tokens, components, interaction states, and breakpoints. Design failures don't throw errors. They look wrong at 768px on a Tuesday and nobody catches it until a user screenshots it. CIT-Design finds them first.
 
 ---
 
-## Core Concepts
+## On First Load
 
-### Two Modes
+Check for `[CIT-CONFIG]` in CLAUDE.md (Claude Code) or Claude Memory (claude.ai). If found, load settings silently.
 
-**Automated Trace Mode** (code-based)
-Full token ownership mapping, state matrix, breakpoint matrix. Same rigor as CIT-Code.
+If not found, use ask_user_input:
+- "Should I show you the design cascade trace before making changes, or run it silently?"
+  - Options: "Show me (recommended)", "Run silently"
+- "Are you working in code (React/Tailwind/CSS) or Figma?"
+  - Options: "Code-based design", "Figma", "Both"
 
-**Collaborative Trace Mode** (Figma)
-Claude presents a structured inspection checklist upfront. User reports findings. Claude synthesizes the cascade map from those findings.
+This determines which mode to use (see Two Modes below).
 
-Every Collaborative output ends with:
+---
+
+## Two Modes — Not Equivalent
+
+### Automated Trace Mode (Code-based: React, Tailwind, CSS)
+Full automated tracing. Token ownership map. State matrix. Breakpoint matrix. CIT reads the actual files.
+
+### Collaborative Trace Mode (Figma)
+Claude cannot read Figma files. CIT provides the inspection framework — the user provides the eyes. Claude synthesizes the cascade map from reported findings.
+
+**Every Collaborative Trace output ends with this disclosure — no exceptions:**
 > *"This map reflects what you reported. Claude cannot verify Figma content independently. Treat this as a guided checklist, not a guaranteed trace."*
 
-### CIT-MAP — Self-Documenting Artifacts
+These modes are not equivalent. Never present them as equal. Automated is more reliable. Users choose based on their workflow.
 
-Every component generated in Automated Mode carries a CIT-MAP block:
+---
+
+## Token Ownership Map
+
+Maintained in `./CLAUDE.md` for code-based projects. Every component declares which design tokens it consumes. Built and updated automatically as CIT-Design traces files.
+
+```
+[CIT-TOKEN-MAP]
+color.primary:
+  consumers: [PrimaryButton, LinkText, FocusRing, BadgeActive]
+  risk-states: [disabled (contrast), focus (ring visibility)]
+  risk-breakpoints: [mobile (reduced contrast tolerance)]
+
+spacing.md:
+  consumers: [PrimaryButton, Card, FormField, NavItem]
+  risk-states: [mobile (padding collapse below 320px)]
+  risk-breakpoints: [mobile]
+
+typography.label:
+  consumers: [PrimaryButton, Badge, TableHeader, Tag]
+  risk-states: []
+  risk-breakpoints: [mobile (truncation)]
+[/CIT-TOKEN-MAP]
+```
+
+When a token is changed, consult the Token Ownership Map before touching anything else.
+
+---
+
+## State and Breakpoint Matrix
+
+Every design change is evaluated across both axes before implementation.
+
+**Interaction States (8):**
+default | hover | focus | active | disabled | error | loading | empty
+
+**Breakpoints (4):**
+mobile (320–767px) | tablet (768–1023px) | desktop (1024–1439px) | wide (1440px+)
+
+For every component in the cascade, flag which specific state + breakpoint combinations are at risk — not just which component.
+
+---
+
+## Triage
+
+| Level | Criteria | Trace Depth |
+|---|---|---|
+| **Minor** | Single component, no shared token, no reuse elsewhere | Tier 1 only. Silent one-liner when CIT_SHOW: ON |
+| **Moderate** | Shared token, reused component, touches multiple states | Full token map trace + state matrix |
+| **Major** | System-level token (primary color, base spacing, base font), design system change | Full trace + all breakpoints + all states + contrast check |
+
+**Default rule:** When uncertain, classify one level higher. Design failures are invisible until they ship.
+
+---
+
+## CIT-MAP Block — Self-Documenting Artifacts
+
+Every component generated in Automated Mode includes a CIT-MAP block. The component carries its own dependency map — no external persistence needed.
 
 ```jsx
 /* ================================================
    CIT-MAP v2.0
-   Component: PrimaryButton
-   Last Traced: [date]
-   File Last Modified: [date]
+   Component: [ComponentName]
+   Last Traced: [ISO date]
+   File Last Modified: [ISO date]
 
-   ⚠️ STALE WARNING: If file was modified after Last Traced,
-   re-trace before trusting this map.
+   ⚠️ STALE CHECK: If file was modified after Last Traced,
+   this map may not reflect current state. Re-trace before trusting.
 
    Token Dependencies:
-   - color.primary → background, hover state, focus ring
-   - spacing.md → padding
-   - typography.label → font-size, weight
+   - [token.name] → [what it affects in this component]
 
    Component Connections:
-   - Used by: Modal, Form, Navbar, CardAction
-   - Depends on: IconWrapper (optional)
+   - Used by: [list of parent components]
+   - Depends on: [list of child components]
 
    State Matrix Risk:
-   ⚠️ disabled: contrast ratio sensitive to color.primary
-   ⚠️ mobile (<320px): padding collapses
-   ✓ hover, focus, active, loading, empty: stable
+   ⚠️ [state]: [specific risk]
+   ✓ [state]: stable
 
    Breakpoint Risk:
-   ⚠️ 768px: layout reflow if parent is flex
-   ✓ 1024px, 1440px: stable
+   ⚠️ [breakpoint]: [specific risk]
+   ✓ [breakpoint]: stable
 
-   Team Note: In mixed teams, treat as Claude's notes,
-   not shared team documentation.
+   Team Note: In mixed teams, treat CIT-MAP as Claude's working
+   notes, not shared team documentation. Re-trace after manual edits.
 ================================================ */
 ```
 
-Stale detection: CIT compares Last Traced against file last modified on every load. If file was touched after last trace, re-trace is triggered automatically.
+### Stale Detection
 
-### State and Breakpoint Matrix
+Every time CIT-Design loads a file containing a CIT-MAP block, it compares `Last Traced` against the file's last modified date.
 
-Every change evaluated across:
+If the file was modified after the last trace:
+> *"⚠️ CIT-MAP is potentially stale. This file was modified after the last trace. Re-tracing before proceeding."*
 
-**States:** default, hover, focus, active, disabled, error, loading, empty
+Re-trace automatically. Update the CIT-MAP block after the trace completes.
 
-**Breakpoints:** mobile (320–767px), tablet (768–1023px), desktop (1024–1439px), wide (1440px+)
+---
 
-### Token Ownership Map
+## Automated Trace Protocol
 
-Maintained in `./CLAUDE.md` for code-based projects:
+### Step 1 — Classify (Triage)
+State classification and reason.
+
+### Step 2 — Token Impact
+Consult Token Ownership Map. List every consumer of every token touched by the change.
+
+### Step 3 — Component Cascade
+For each consumer, trace to its dependents. Mark confidence:
+- Files in context → HIGH
+- Inferred from imports → INFERRED
+
+### Step 4 — State Matrix
+For each affected component, evaluate all 8 states. Flag risks.
+
+### Step 5 — Breakpoint Matrix
+For each affected component, evaluate all 4 breakpoints. Flag risks.
+
+### Step 6 — Contrast Check (Major only)
+If color token changed, check contrast ratios for:
+- Text on new background color
+- Disabled state (often lowest contrast)
+- Focus ring visibility
+- Dark mode variant if applicable
+
+---
+
+## Collaborative Trace Protocol (Figma)
+
+Questions are asked in one structured block upfront — not one at a time. User answers all, Claude synthesizes once.
+
+**Example for a primary color change:**
+> *"Before I build the cascade map I need your eyes on the following. Check each and report back:*
+>
+> *1. Disabled state — does the new color maintain sufficient contrast for disabled text/icons?*
+> *2. Dark mode — does a dark mode variant exist and does it use this token?*
+> *3. Icon-only variant — is there an icon-only version of this component and is it affected?*
+> *4. Modal context — is this component used inside modals where the background color differs?*
+> *5. Focus ring — is the focus ring color derived from the same token?*
+> *6. All breakpoints — does the component behave differently at mobile/tablet/desktop/wide?*
+>
+> *Report what you find and I'll build the cascade map from your findings."*
+
+After user responds, synthesize into a cascade map and append the Collaborative Mode disclosure.
+
+---
+
+## Full Response Structure
+
+### CIT_SHOW: ON (Moderate or Major):
 
 ```
-color.primary:
-  consumers: PrimaryButton, LinkText, FocusRing, BadgeActive
-  risk states: disabled (contrast), focus (ring visibility)
-  risk breakpoints: mobile (reduced contrast tolerance)
-```
+## CIT Design Trace [Moderate|Major]
+Mode: Automated | Collaborative
+Triage: [level] — [reason]
 
-Change a token → instantly know every component, state, and breakpoint at risk.
+### Token Impact
+[Which tokens are touched and all their consumers]
 
-### Response Structure
-```
-## CIT Trace [Minor/Moderate/Major]
-[Token ownership trace]
-[Component cascade map]
-[State matrix risks]
-[Breakpoint matrix risks]
+### Component Cascade
+[Tree or Domino map with confidence labels]
+
+### State Matrix Risks
+[Component] → [state]: [specific risk]
+
+### Breakpoint Matrix Risks
+[Component] → [breakpoint]: [specific risk]
+
+### Contrast Check (Major only)
+[Pass/Fail per combination]
 
 ## Conflicts & Risks
-[Contrast failures, layout collisions, circular token dependencies]
+[Contrast failures, layout collisions, token circular dependencies, or "None found"]
 
 ## Implementation
-[Only after trace is complete]
+[Design change — only after full trace complete]
 ```
 
 ---
 
-*Full implementation coming. Track progress in BLUEPRINT.md.*
+## Loop Detection
+
+When a token feeds a component that defines a variant that overrides the original token:
+
+```
+⚠️ TOKEN LOOP DETECTED
+Loop: color.primary → PrimaryButton → PrimaryButton--dark variant → overrides color.primary
+Treat loop as atomic unit. Changes to color.primary must account for the dark variant override simultaneously.
+```
+
+---
+
+## Permanent Disclosure
+
+> **CIT-Design honest limits:**
+> - Collaborative Trace Mode inherits user error — if your Figma inspection misses something, the map reflects that miss
+> - CIT-MAP blocks go stale when files are edited outside Claude — stale maps with authority are dangerous — always re-trace after manual edits
+> - In mixed teams, CIT-MAP blocks are Claude's working notes, not team documentation
+> - Enforcement relies on Claude's discipline, not a hard constraint
+> - Contrast checks are Claude's calculation based on reported colors — verify with a dedicated accessibility tool for production

@@ -134,10 +134,10 @@ CIT/
 
 | Skill | Status |
 |---|---|
-| CIT-Config | 🔧 In development |
-| CIT-Chat | 🔧 In development |
-| CIT-Code | 🔧 In development |
-| CIT-Design | 🔧 In development |
+| CIT-Config | ✅ Live |
+| CIT-Chat | ✅ Live |
+| CIT-Code | ✅ Live |
+| CIT-Design | ✅ Live |
 
 ---
 
